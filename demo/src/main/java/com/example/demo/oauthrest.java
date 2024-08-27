@@ -1,9 +1,11 @@
 package com.example.demo;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,11 +34,24 @@ public class oauthrest {
 	public String adminMessage() {
 		return "Welcome Admin";
 	}
+	@GetMapping("/karthi")
+	public String getUserPrincipal() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();
+		return "name : "+"principal : "+currentPrincipalName+authentication.getPrincipal();
+	}
 	
-//	 @GetMapping("/api/user/info")
-//	    public Map<String, Object> userInfo(@AuthenticationPrincipal OidcUser oidcUser) {
+	@GetMapping("/user")
+    public String getUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return "User Details: " + userDetails.getUsername();
+    }
+	 @GetMapping("/user-info")
+	    public String userInfo(@AuthenticationPrincipal OidcUser oidcUser) {
 //	        if (oidcUser != null) {
 //	            // Extract user information
+//		 String userinfo = oidcUser.getEmail();
+		 String userinfo = oidcUser.getUserInfo().getProfile();
+		 return userinfo;
 //	            String fullName = oidcUser.getFullName();
 //	            String email = oidcUser.getEmail();
 //	            String username = oidcUser.getPreferredUsername();
@@ -58,7 +73,7 @@ public class oauthrest {
 //	            );
 //	        }
 //	        return Map.of("error", "User information not available");
-//	    }
+	    }
 //	
 
 }

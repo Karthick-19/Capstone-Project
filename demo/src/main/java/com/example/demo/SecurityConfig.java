@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -33,16 +34,28 @@ public class SecurityConfig {
             .oauth2Login(oauth2Login ->
                 oauth2Login
                     .userInfoEndpoint(userInfoEndpoint -> 
-                        userInfoEndpoint.oidcUserService(oidcUserService()) // Process user info for OIDC
+                        userInfoEndpoint.oidcUserService(customOidcUserService()) // Process user info for OIDC
                     )
+                  
                     .defaultSuccessUrl("/api/oauth/home", true)  // Redirect to an API endpoint after successful login
-            );
+            )
+            .sessionManagement(sessionManagement ->
+            sessionManagement
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+        )
+        .sessionManagement(sessionManagement ->
+            sessionManagement
+                .sessionFixation().newSession()  // Ensure session is not fixed
+        );
         return http.build();
     }
 	
 //	An implementation of an OAuth2UserService that supports OpenID Connect 1.0Provider's.
-	  public OidcUserService oidcUserService() {
+	@Bean
+	public OidcUserService customOidcUserService() {
 	        OidcUserService oidcUserService = new OidcUserService();
+	        
+	       
 	        // Customize the OIDC user service if necessary
 	        return oidcUserService;
 	    }
