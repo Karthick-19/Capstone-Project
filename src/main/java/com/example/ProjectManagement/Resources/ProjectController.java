@@ -1,5 +1,7 @@
 package com.example.ProjectManagement.Resources;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,13 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ProjectManagement.Entity.Project;
+import com.example.ProjectManagement.Entity.Task;
 import com.example.ProjectManagement.Service.ProjectService;
+import com.example.ProjectManagement.Service.TaskService;
 
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
     @Autowired
     private ProjectService projectService;
+    
+    @Autowired
+    private TaskService taskService;
 
     @PostMapping
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
@@ -41,5 +48,24 @@ public class ProjectController {
     public ResponseEntity<Project> getProject(@PathVariable Long id) {
         return ResponseEntity.ok(projectService.getProjectById(id));
     }
+    
+
+    @GetMapping
+    public ResponseEntity<List<Project>> getAllProjects() {
+        List<Project> projects = projectService.getAllProjects();
+        return ResponseEntity.ok(projects);
+    }
+    
+    @GetMapping("/{projectId}/tasks")
+    public ResponseEntity<List<Task>> getTasksByProject(@PathVariable Long projectId) {
+        return ResponseEntity.ok(taskService.getTasksByProject(projectId));
+    }
+    
+    @GetMapping("{projectId}/tasks/{id}")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        Task task = taskService.getTaskById(id);
+        return ResponseEntity.ok(task);
+    }
+    
 }
 

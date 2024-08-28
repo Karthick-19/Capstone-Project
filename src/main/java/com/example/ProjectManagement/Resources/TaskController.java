@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ProjectManagement.Entity.Project;
 import com.example.ProjectManagement.Entity.Task;
-import com.example.ProjectManagement.Entity.TaskDTO;
 import com.example.ProjectManagement.Entity.TaskStatus;
 import com.example.ProjectManagement.Repository.ProjectRepository;
 import com.example.ProjectManagement.Repository.TaskRepository;
@@ -76,5 +75,12 @@ public class TaskController {
     public ResponseEntity<List<Task>> getTasksByProject(@PathVariable Long projectId) {
         return ResponseEntity.ok(taskService.getTasksByProject(projectId));
     }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        Task task = taskService.getTaskById(id);
+        return ResponseEntity.ok(task);
+    }
 }
+
 

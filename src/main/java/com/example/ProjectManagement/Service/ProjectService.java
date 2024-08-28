@@ -1,5 +1,7 @@
 package com.example.ProjectManagement.Service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,10 @@ public class ProjectService {
 
     public Project getProjectById(Long id) {
         return projectRepository.findById(id).orElseThrow();
+    }
+    
+    public List<Project> getAllProjects() {
+        return projectRepository.findAll();
     }
 
 }
