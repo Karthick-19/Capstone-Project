@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ProjectManagement.Entity.Project;
 import com.example.ProjectManagement.Entity.Task;
+import com.example.ProjectManagement.Entity.TaskWithProjectDTO;
 import com.example.ProjectManagement.Service.ProjectService;
 import com.example.ProjectManagement.Service.TaskService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
@@ -66,6 +69,44 @@ public class ProjectController {
         Task task = taskService.getTaskById(id);
         return ResponseEntity.ok(task);
     }
+    
+    @GetMapping("/user/{userId}")
+    public List<Project> getProjectsByUserId(@PathVariable int userId) {
+        return projectService.getProjectsByUserId(userId);
+    }
+    
+//    @GetMapping("/assigned/{userId}")
+//    public List<Task> getTasksAssignedToUser(@PathVariable("userId") String userId) {
+//        return taskService.getTasksAssignedToUser(userId);
+//    }
+    
+    @GetMapping("/assigned/{username}")
+    public ResponseEntity<List<TaskWithProjectDTO>> getTasksAssignedToUser(@PathVariable String username) {
+        List<TaskWithProjectDTO> tasksWithProjects = taskService.getTasksAssignedToUserWithProjectDTO(username);
+        return ResponseEntity.ok(tasksWithProjects);
+    }
+//    @GetMapping("/assigned-details/{username}")
+//    public List<ProjectDetailsDTO> getProjectsWithAssignedTasks(@PathVariable String username) {
+//        // Fetch tasks assigned to the username
+//        List<Task> assignedTasks = taskService.findTasksByAssignedTo(username);
+//        
+//        // Extract project IDs from the tasks
+//        List<Project> projectIds = assignedTasks.stream()
+//                                             .map(Task::getProject)
+//                                             .distinct()
+//                                             .collect(Collectors.toList());
+//
+//        // Fetch projects based on project IDs
+//        List<Project> projects = projectService.findProjectsByIds(projectIds);
+//
+//        // Map projects to DTOs with tasks
+//        return projects.stream().map(project -> {
+//            List<Task> tasksForProject = assignedTasks.stream()
+//                                                      .filter(task -> task.getProject().equals(project.getId()))
+//                                                      .collect(Collectors.toList());
+//            return new ProjectDetailsDTO(project, tasksForProject);
+//        }).collect(Collectors.toList());
+//    }
     
 }
 

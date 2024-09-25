@@ -6,11 +6,15 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 public class Project {
@@ -19,7 +23,15 @@ public class Project {
     private Long id;
     private String name;
     private String description;
+//    private Date createdDate;
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = new Date();
+    }
     private int leadId;
 //    @ManyToOne
 //    @JoinColumn(name = "lead_id")
@@ -93,4 +105,3 @@ public class Project {
 
     
 }
-

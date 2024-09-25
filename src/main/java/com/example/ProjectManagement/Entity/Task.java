@@ -17,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private String name;
     private String description;
@@ -34,23 +34,16 @@ public class Task {
 
 //    @ManyToOne
 //    @JoinColumn(name = "assigned_to")
-//    private User assignedTo;
+    private String assignedTo;
 
-//    @ManyToMany
-//    @JoinTable(
-//        name = "task_dependencies",
-//        joinColumns = @JoinColumn(name = "task_id"),
-//        inverseJoinColumns = @JoinColumn(name = "dependency_id")
-//    )
-//    private List<Task> dependencies;
     
     private Date createdDate;
     private Date deadline;
     
     public Task() {}
 
-	public Task(Long id, String name, String description, TaskStatus status, int progress, Project project,
-			Date createdDate, Date deadline) {
+	public Task(int id, String name, String description, TaskStatus status, int progress, Project project,
+			Date createdDate, Date deadline,String assignedTo) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -60,13 +53,22 @@ public class Task {
 		this.project = project;
 		this.createdDate = createdDate;
 		this.deadline = deadline;
+		this.assignedTo = assignedTo;
 	}
 
-	public Long getId() {
+	public String getAssignedTo() {
+		return assignedTo;
+	}
+
+	public void setAssignedTo(String assignedTo) {
+		this.assignedTo = assignedTo;
+	}
+
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

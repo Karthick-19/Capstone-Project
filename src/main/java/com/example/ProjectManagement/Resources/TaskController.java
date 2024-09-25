@@ -1,9 +1,11 @@
 package com.example.ProjectManagement.Resources;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +22,9 @@ import com.example.ProjectManagement.Entity.TaskStatus;
 import com.example.ProjectManagement.Repository.ProjectRepository;
 import com.example.ProjectManagement.Repository.TaskRepository;
 import com.example.ProjectManagement.Service.TaskService;
+import com.example.ProjectManagement.webSocket.TaskEventController;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
@@ -32,6 +36,15 @@ public class TaskController {
     
     @Autowired
     private ProjectRepository projectRepository;
+    
+    private final TaskEventController taskEventController;
+
+    @Autowired
+    public TaskController(TaskService taskService, TaskEventController taskEventController) {
+        this.taskService = taskService;
+        this.taskEventController = taskEventController;
+    }
+
 
 //    @PostMapping
 //    public ResponseEntity<Task> createTask(@RequestBody Task task) {
@@ -45,12 +58,30 @@ public class TaskController {
 
         task.setProject(project);
         Task savedTask = taskRepository.save(task);
+        
+        if (task.getAssignedTo() != null && !task.getAssignedTo().isEmpty()) {
+            taskEventController.notifyTaskAssigned(task.getAssignedTo(), savedTask);
+        }
         return ResponseEntity.ok(savedTask);
     }
+//    @PostMapping
+//    public ResponseEntity<Task> createTask(@RequestBody Task task) {
+//      // Fetch the Project entity based on the project ID provided
+//      Optional<Project> project = projectRepository.findById(task.getProject().getId());
+//      if (project == null) {
+//        return ResponseEntity.badRequest().body(null); // Or handle this case as needed
+//      }
+//      
+//      // Set the fetched Project to the Task
+//      task.setProject(project);
+//      
+//      Task createdTask = taskService.createTask(task);
+//      return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+//    }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
+    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task task) {
         task.setId(id);
         return ResponseEntity.ok(taskService.updateTask(task));
     }
@@ -81,6 +112,8 @@ public class TaskController {
         Task task = taskService.getTaskById(id);
         return ResponseEntity.ok(task);
     }
+    
+    
 }
 
 
